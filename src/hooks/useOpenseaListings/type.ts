@@ -368,13 +368,181 @@ export interface Order {
   taker_asset_bundle: TakerAssetBundle;
 }
 
-export interface OpenseaListingsDto {
+export interface OpenseaListingsRes {
   next?: any;
   previous?: any;
-  orders: Order[];
+  orders?: Order[];
 }
 
 export interface OpenseaListingsParam {
   nft_token_address: string;
   nft_token_id: string;
+}
+
+
+export interface AssetDetail {
+  id: number;
+  num_sales: number;
+  background_color?: any;
+  image_url: string;
+  image_preview_url: string;
+  image_thumbnail_url: string;
+  image_original_url: string;
+  animation_url?: any;
+  animation_original_url?: any;
+  name: string;
+  description: string;
+  external_link: string;
+  asset_contract: {
+    address: string;
+    asset_contract_type: string;
+    created_date: Date;
+    name: string;
+    nft_version: string;
+    opensea_version?: any;
+    owner: number;
+    schema_name: string;
+    symbol: string;
+    total_supply?: any;
+    description: string;
+    external_link: string;
+    image_url: string;
+    default_to_fiat: boolean;
+    dev_buyer_fee_basis_points: number;
+    dev_seller_fee_basis_points: number;
+    only_proxied_transfers: boolean;
+    opensea_buyer_fee_basis_points: number;
+    opensea_seller_fee_basis_points: number;
+    buyer_fee_basis_points: number;
+    seller_fee_basis_points: number;
+    payout_address?: any;
+  };
+  permalink: string;
+  collection: {
+    banner_image_url: string;
+    chat_url?: any;
+    created_date: Date;
+    default_to_fiat: boolean;
+    description: string;
+    dev_buyer_fee_basis_points: string;
+    dev_seller_fee_basis_points: string;
+    discord_url: string;
+    display_data: {
+      card_display_style: string;
+    };
+    external_url: string;
+    featured: boolean;
+    featured_image_url: string;
+    hidden: boolean;
+    safelist_request_status: string;
+    image_url: string;
+    is_subject_to_whitelist: boolean;
+    large_image_url: string;
+    medium_username: string;
+    name: string;
+    only_proxied_transfers: boolean;
+    opensea_buyer_fee_basis_points: string;
+    opensea_seller_fee_basis_points: string;
+    payout_address?: any;
+    require_email: boolean;
+    short_description?: any;
+    slug: string;
+    telegram_url?: any;
+    twitter_username: string;
+    instagram_username?: any;
+    wiki_url?: any;
+    is_nsfw: boolean;
+    fees: {
+      seller_fees: Record<string, number>;
+      opensea_fees: Record<string, number>;
+    };
+    is_rarity_enabled: boolean;
+  };
+  decimals?: any;
+  token_metadata?: any;
+  is_nsfw: boolean;
+  owner: {
+    user: {
+      username: string;
+    };
+    profile_img_url: string;
+    address: string;
+    config: string;
+  };
+  seaport_sell_orders?: any;
+  creator: {
+    user: {
+      username: string;
+    };
+    profile_img_url: string;
+    address: string;
+    config: string;
+  };
+  traits: Array<{
+    trait_type: string;
+    value: number;
+    display_type?: any;
+    max_value?: any;
+    trait_count: number;
+    order?: any;
+  }>;
+  last_sale?: {
+    asset: {
+      decimals?: any;
+      token_id: string;
+    };
+    asset_bundle?: any;
+    event_type: string;
+    event_timestamp: Date;
+    auction_type?: any;
+    total_price: string;
+    payment_token: {
+      symbol: string;
+      address: string;
+      image_url: string;
+      name: string;
+      decimals: number;
+      eth_price: string;
+      usd_price: string;
+    };
+    transaction: {
+      block_hash: string;
+      block_number: string;
+      from_account: {
+        user: {
+          username: string;
+        };
+        profile_img_url: string;
+        address: string;
+        config: string;
+      };
+      id: number;
+      timestamp: Date;
+      to_account: {
+        user: {
+          username: string;
+        };
+        profile_img_url: string;
+        address: string;
+        config: string;
+      };
+      transaction_hash: string;
+      transaction_index: string;
+    };
+    created_date: Date;
+    quantity: string;
+  };
+  top_bid?: any;
+  listing_date?: any;
+  is_presale: boolean;
+  transfer_fee?: any;
+  transfer_fee_payment_token?: any;
+  supports_wyvern: boolean;
+  rarity_data?: any;
+  token_id: string;
+}
+export interface OpenseaAssetRes {
+  next?: any;
+  previous?: any;
+  assets?: AssetDetail[];
 }

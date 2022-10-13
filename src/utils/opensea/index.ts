@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { OpenseaListingsDto } from '../../hooks/useOpenseaListings/type';
+import { OpenseaListingsRes } from '../../hooks/useOpenseaListings/type';
 import { convertObjToQueryStr } from '../util';
 
 export const opensea_api_domain = 'https://api.opensea.io/api';
@@ -79,11 +79,11 @@ export class OpenseaService {
 
   static getNFTAssetDetail = async (p: {
     asset_contract_address: string;
-    token_ids: string;
-  }): Promise<any> => {
+    token_ids: Array<string> | string;
+  }, isTestMode: boolean = false): Promise<any> => {
     if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
     return await this.responseHelper(
-      `${opensea_api_domain}/v1/asset/${p.asset_contract_address}/${p.token_ids}?include_orders=true`,
+      `${isTestMode ? opensea_test_api_domain : opensea_api_domain}/v1/assets${convertObjToQueryStr(p)}`,
     );
   };
 
@@ -91,7 +91,7 @@ export class OpenseaService {
     asset_contract_address: string;
     token_ids: Array<string> | string;
     order_direction?: 'asc' | 'desc';
-  }, isTestMode: boolean = false): Promise<OpenseaListingsDto> => {
+  }, isTestMode: boolean = false): Promise<OpenseaListingsRes> => {
     if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
     const url = `${isTestMode ? opensea_test_api_domain : opensea_api_domain}/v2/orders/${isTestMode ? 'goerli' : 'ethereum'}/seaport/listings${convertObjToQueryStr(p)}`;
     return await this.responseHelper(url);
