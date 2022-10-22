@@ -34,5 +34,6 @@
     "hooks": {
       "pre-commit": "yarn run lint && yarn run format"
     }
-  }
+  },
+  "version": "0.0.1"
 }
