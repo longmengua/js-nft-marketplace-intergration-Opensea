@@ -4,7 +4,9 @@ import { MetamaskWalletProvider } from '../src/providers/wallet/metamask'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <MetamaskWalletProvider>
-    <Component {...pageProps} />
+    <div style={{minHeight: '100vh'}}>
+      <Component {...pageProps} />
+    </div>
   </MetamaskWalletProvider>
 }
 

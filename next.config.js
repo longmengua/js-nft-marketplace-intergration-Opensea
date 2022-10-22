@@ -1,4 +1,20 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'openseauserdata.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.seadn.io',
+      },
+    ]
+  }
 }

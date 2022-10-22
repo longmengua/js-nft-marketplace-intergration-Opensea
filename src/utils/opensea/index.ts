@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { OpenseaListingsRes } from '../../hooks/useOpenseaListings/type';
-import { convertObjToQueryStr } from '../util';
+import { Utility } from '../util';
+import { OpenseaListingRes as OpenseaNftListingRes } from './type';
 
 export const opensea_api_domain = 'https://api.opensea.io/api';
 export const opensea_test_api_domain = 'https://testnets-api.opensea.io/api';
@@ -28,41 +28,37 @@ export class OpenseaService {
     return res.data;
   };
 
+  static _getDomain = (isTestMode: boolean) => isTestMode ? opensea_test_api_domain : opensea_api_domain;
+  static _getNetwork = (isTestMode: boolean) => isTestMode ? 'goerli' : 'ethereum';
+
   // use slug as key of map
-  static initCursorBySlug = (slug: string) => {
+  static _initCursor = (slug: string) => {
     if (!this.cursorCache[slug]) this.cursorCache[slug] = {};
   };
 
   // cache the cursor for speeding up query
   // i.e. previous = null, next = cj0xJi1waz03Nzk3ODI=, limit = 20
   // then offset will be 20, value will be cj0xJi1waz03Nzk3ODI=.
-  static addCursorBySlugAndOffset = (slug: string, offset: number, cursor: string) => {
+  static _addCursor = (slug: string, offset: number, cursor: string) => {
     if (cursor && this.cursorCache[slug]) this.cursorCache[slug][offset] = cursor;
   };
 
   // get next cursor from cache by slug and index
-  static getNextCursorBySlug = (slug: string, offset: number): string | undefined => {
+  static _getNextCursor = (slug: string, offset: number): string | undefined => {
     return this.cursorCache[slug] ? this.cursorCache[slug][offset] : undefined;
   };
 
-  static getStats = async (p: { collectionName: string; offset?: number; limit?: number }) =>
-    await this.responseHelper(`${opensea_api_domain}/v1/collection/${p?.collectionName}/stats`);
-
-  static getStatByCollectionSlug = async (slug: string, offset?: number, limit?: number): Promise<any> => {
-    const collectionName = this.specialCaseKeys.includes(slug) ? this.specialCases[slug] : slug;
-    return await this.getStats({
-      collectionName,
-      offset,
-      limit,
-    });
+  static getStatByCollectionSlug = async (p: {slug: string}, isTestMode: boolean = false): Promise<any> => {
+    const collectionName = this.specialCaseKeys.includes(p.slug) ? this.specialCases[p.slug] : p.slug;
+    return await this.responseHelper(`${opensea_api_domain}/v1/collection/${collectionName}/stats`);
   };
 
-  static getNFTAssetsByCollectionSlug = async (p: {
+  static getNftAssetsByCollectionSlug = async (p: {
     collection_slug: string;
     order_direction?: any;
     limit?: number;
     cursor?: string;
-  }): Promise<{
+  }, isTestMode: boolean = false): Promise<{
     next: string | null;
     previous: string | null;
     assets: Array<any>;
@@ -73,43 +69,49 @@ export class OpenseaService {
       next: string | null;
       previous: string | null;
       assets: Array<any>;
-    } = await this.responseHelper(`${opensea_api_domain}/v1/assets${convertObjToQueryStr({ ...p, order_direction })}`);
+    } = await this.responseHelper(`${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({ ...p, order_direction })}`);
     return res;
   };
 
-  static getNFTAssetDetail = async (p: {
+  static getNftAssetByAddressAndId = async (p: {
     asset_contract_address: string;
     token_ids: Array<string> | string;
   }, isTestMode: boolean = false): Promise<any> => {
     if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
     return await this.responseHelper(
-      `${isTestMode ? opensea_test_api_domain : opensea_api_domain}/v1/assets${convertObjToQueryStr(p)}`,
+      `${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr(p)}`,
     );
   };
 
-  static getNFTListing = async (p: {
-    asset_contract_address: string;
-    token_ids: Array<string> | string;
-    order_direction?: 'asc' | 'desc';
-  }, isTestMode: boolean = false): Promise<OpenseaListingsRes> => {
-    if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
-    const url = `${isTestMode ? opensea_test_api_domain : opensea_api_domain}/v2/orders/${isTestMode ? 'goerli' : 'ethereum'}/seaport/listings${convertObjToQueryStr(p)}`;
+  // This is used to fetch the set of active listings on a given NFT for the Seaport contract.
+  static getNftListing = async (p?: {
+    asset_contract_address?: string; // Address of the contract for an NFT
+    token_ids?: Array<string> | string;
+    limit?: number; // Number of listings to retrieve
+    maker?: string; // Filter by the order makers wallet address
+    taker?: string; // Filter by the order takers wallet address
+    order_by?: 'created_date' | 'eth_price'; // eth_price is only supported while asset_contract_address and token_id are populated.
+    order_direction?: 'asc' | 'desc'; // ascending or descending sort.
+    listed_after?: string; // Only show orders listed after this timestamp. Seconds since the Unix epoch.
+    listed_before?: string; // Only show orders listed before this timestamp. Seconds since the Unix epoch.
+  }, isTestMode: boolean = false): Promise<OpenseaNftListingRes> => {
+    const url = `${this._getDomain(isTestMode)}/v2/orders/${this._getNetwork(isTestMode)}/seaport/listings${Utility.convertObjToQueryStr(p)}`;
     return await this.responseHelper(url);
   };
 
-  static getNFTOffer = async (p: { asset_contract_address: string; token_ids: Array<string> }): Promise<any> => {
-    if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
-    const res: any = await this.responseHelper(`${opensea_api_domain}/v2/orders/ethereum/seaport/offers`);
-    return res;
-  };
-
-  static createNFTListing = async (p: { asset_contract_address: string; token_ids: Array<string> }): Promise<any> => {
-    if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
-    return await this.responseHelper(`${opensea_api_domain}/v2/orders/ethereum/seaport/lstings`);
-  };
-
-  static createNFTOffer = async (p: { asset_contract_address: string; token_ids: Array<string> }): Promise<any> => {
-    if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
-    return await this.responseHelper(`${opensea_api_domain}/v2/orders/ethereum/seaport/offers`);
+  // This is used to fetch the set of active offers on a given NFT for the Seaport contract.
+  static getOffersForNft = async (p: { 
+    asset_contract_address?: string; // Address of the contract for an NFT
+    token_ids?: Array<string> | string;
+    limit?: number; // Number of listings to retrieve
+    maker?: string; // Filter by the order makers wallet address
+    taker?: string; // Filter by the order takers wallet address
+    order_by?: 'created_date' | 'eth_price'; // eth_price is only supported while asset_contract_address and token_id are populated.
+    order_direction?: 'asc' | 'desc'; // ascending or descending sort.
+    listed_after?: string; // Only show orders listed after this timestamp. Seconds since the Unix epoch.
+    listed_before?: string; // Only show orders listed before this timestamp. Seconds since the Unix epoch.
+  }, isTestMode: boolean = false): Promise<any> => {
+    const url = `${this._getDomain(isTestMode)}/v2/orders/${this._getNetwork(isTestMode)}/seaport/offers`;
+    return await this.responseHelper(url);
   };
 }
