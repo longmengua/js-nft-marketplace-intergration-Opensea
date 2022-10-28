@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Utility } from '../util';
+import { openseaApiKey, SUCCESS, TOO_MANY_REQUEST } from './const';
 import { OpenseaListingRes as OpenseaNftListingRes } from './type';
 
 export const opensea_api_domain = 'https://api.opensea.io/api';
@@ -11,21 +12,34 @@ export class OpenseaService {
   };
   static specialCaseKeys: Array<string> = Object.keys(this.specialCases);
   static cursorCache: Record<string, Record<number, string>> = {};
-  static responseHelper = async (url: string) => {
+  
+  static responseHelper = async <T = any>(url: string, params?: any): Promise<T | undefined> => {
+    let toReturn: T | undefined = undefined;
+    let isSuccessful = false;
     const headers = {
-      'X-API-KEY': '',
+      'X-API-KEY': `${openseaApiKey}`,
     };
-    const res = await axios
-      .get(url, {
-        headers,
-      })
-      .catch((e) => {
-        throw e;
-      });
-    if (res.status !== 200) {
-      throw res.statusText;
+    while (!isSuccessful) {
+      const res = await axios
+        .get(url, {
+          headers,
+          params,
+        })
+        .catch((e) => e?.response);
+      const status = res?.status;
+      if (status === SUCCESS) {
+        isSuccessful = true;
+        toReturn = res?.data;
+        break;
+      }
+      if (status !== SUCCESS && status !== TOO_MANY_REQUEST) {
+        throw new Error(`Failed on opensea API.(url:${url})(params:${params})`);
+      }
+      if (status === TOO_MANY_REQUEST) {
+        await Utility.sleep(1000);
+      }
     }
-    return res.data;
+    return toReturn;
   };
 
   static _getDomain = (isTestMode: boolean) => isTestMode ? opensea_test_api_domain : opensea_api_domain;
@@ -62,15 +76,10 @@ export class OpenseaService {
     next: string | null;
     previous: string | null;
     assets: Array<any>;
-  }> => {
+  } | undefined> => {
     const { order_direction = 'desc' } = p;
     if (!p?.collection_slug) throw new Error('Missing collection slug');
-    const res: {
-      next: string | null;
-      previous: string | null;
-      assets: Array<any>;
-    } = await this.responseHelper(`${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({ ...p, order_direction })}`);
-    return res;
+    return await this.responseHelper(`${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({ ...p, order_direction })}`);
   };
 
   static getNftAssetByAddressAndId = async (p: {
@@ -94,7 +103,7 @@ export class OpenseaService {
     order_direction?: 'asc' | 'desc'; // ascending or descending sort.
     listed_after?: string; // Only show orders listed after this timestamp. Seconds since the Unix epoch.
     listed_before?: string; // Only show orders listed before this timestamp. Seconds since the Unix epoch.
-  }, isTestMode: boolean = false): Promise<OpenseaNftListingRes> => {
+  }, isTestMode: boolean = false): Promise<OpenseaNftListingRes | undefined> => {
     const url = `${this._getDomain(isTestMode)}/v2/orders/${this._getNetwork(isTestMode)}/seaport/listings${Utility.convertObjToQueryStr(p)}`;
     return await this.responseHelper(url);
   };

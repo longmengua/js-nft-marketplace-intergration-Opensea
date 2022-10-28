@@ -1,6 +1,14 @@
 import { AxiosResponse } from "axios";
+import { BigNumber, ethers } from "ethers";
 
 export class Utility {
+
+  static sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  static formatUnits = (amount: BigNumber, decimals: number) => {
+    return Number(ethers.utils.formatUnits(amount, decimals));
+  }
+
   static convertObjToQueryStr = (params?: Record<string, any>) => {
     if (!params || Object.values(params).length === 0) return '';
     let str = '';

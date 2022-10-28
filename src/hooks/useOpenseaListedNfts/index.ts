@@ -20,5 +20,8 @@ export const useOpenseaListedNfts = (limit?: number) => {
     });
   }, [getOpenseaListedNfts])
 
-  return state;
+  return {
+    data: state,
+    isLoaded: isLoaded,
+  };
 }
