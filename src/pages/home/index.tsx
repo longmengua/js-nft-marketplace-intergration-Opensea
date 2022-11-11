@@ -1,12 +1,17 @@
 import { useMetamaskWallet } from "../../providers/wallet/metamask"
 import { useOpenseaListedNfts } from "../../hooks/useOpenseaListedNfts";
-import { OpenseaNftOrder } from "../../utils/opensea/type";
 import { Utility } from "../../utils/util";
 import { NftCard } from "../../components/nftCard";
-import { DTO } from "../../utils/dto";
 import { NftDetail } from "../../components/nftDetail";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useOpenseaNftDetail } from "../../hooks/useOpenseaNftDetail";
+import { NftCardProps } from "@/components/nftCard/type";
+import { NftDetailProps } from "@/components/nftDetail/type";
+
+export type HomeStateI = {
+  token_address?: string;
+  token_id?: string;
+}
 
 export const Home = () => {
   const {
@@ -17,37 +22,33 @@ export const Home = () => {
   } = useMetamaskWallet();
   const limit = 20;
   const { data: listedNft, isLoaded } = useOpenseaListedNfts(limit);
-  const [state, setState] = useState<OpenseaNftOrder | undefined>(undefined);
-  // const {} = useOpenseaNftDetail(state);
-  const s = {
-    img_url: "",
-    summary: {
-      nft_author: "",
-      nft_description: "",
-      collection_name: "",
-      collection_description: ""
-    },
-    details: {
-      network: "",
-      creator_earnings: 0,
-      token_address: "",
-      token_account: "",
-      token_id: "",
-      collection_account: "",
-      owner_account: "",
-      created_date: ""
-    },
-    traits: []
-  };
+  const nftCardInfos: Array<NftCardProps> | undefined = listedNft?.map(NftCardProps.convert);
+  const [state, setState] = useState<undefined | HomeStateI>(undefined);
+  const { data: assetInfo } = useOpenseaNftDetail(state?.token_address, state?.token_id);
+  const nftDetailProps: NftDetailProps | undefined = NftDetailProps.convert(assetInfo);
 
   useEffect(() => {
-    if (!state && listedNft && listedNft.length > 0) setState(listedNft[0])
-  }, [listedNft])
+    if (state) return;
+    if (nftCardInfos && nftCardInfos.length > 0) {
+      const info = Utility.arrayHelper<NftCardProps>(nftCardInfos);
+      const newState: HomeStateI = {
+        token_address: info?.token_address,
+        token_id: info?.token_id,
+      };
+      setState(pre => pre ?? newState);
+    }
+  }, [nftCardInfos])
 
+  // console.log('===', state, assetInfo, nftDetailProps);
   return <div className="">
     <div className="flex justify-between w-[1050px] my-0 mx-auto box-border">
       <div className="flex-1 p-[10px]">
-        <NftDetail />
+      <NftDetail 
+        img_url={nftDetailProps?.img_url} 
+        summary={nftDetailProps?.summary} 
+        details={nftDetailProps?.details} 
+        traits={nftDetailProps?.traits} 
+      />
       </div>
       <div className="">
         <div className="flex my-[20px]">
@@ -62,8 +63,8 @@ export const Home = () => {
     </div>
     <br />
     <div className="justify-center flex flex-wrap w-[1050px] h-[40%] my-0 mx-auto gap-[10px] overflow-y-scroll box-border">
-      {listedNft?.map(DTO.OpenseaAssetToNftCardProps).map((v, i) => <NftCard {...v} key={'nft-card#' + i} />)}
-      {!listedNft && Array.from({length: limit}, (v) => v).map((v, i) => <NftCard key={'nft-splash-card#' + i} />)}
+      {nftCardInfos?.map((v, i) => <NftCard {...v} key={'nft-card#' + i} />)}
+      {!listedNft && Array.from({length: limit}, (v) => v).map((v, i) => <NftCard key={'nft-splash-card#' + i} img_url={undefined} item_name={undefined} collection_name={undefined} price={undefined} token_address={undefined} token_id={undefined} />)}
     </div>
     <br />
   </div>

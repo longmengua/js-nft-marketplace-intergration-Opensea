@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Utility } from '../util';
 import { openseaApiKey, SUCCESS, TOO_MANY_REQUEST } from './const';
-import { OpenseaListingRes as OpenseaNftListingRes } from './type';
+import { OpenseaAssetRes } from './type/openseaAssetRes';
 
 export const opensea_api_domain = 'https://api.opensea.io/api';
 export const opensea_test_api_domain = 'https://testnets-api.opensea.io/api';
@@ -85,7 +85,7 @@ export class OpenseaService {
   static getNftAssetByAddressAndId = async (p: {
     asset_contract_address: string;
     token_ids: Array<string> | string;
-  }, isTestMode: boolean = false): Promise<any> => {
+  }, isTestMode: boolean = false): Promise<OpenseaAssetRes | undefined> => {
     if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
     return await this.responseHelper(
       `${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr(p)}`,
@@ -103,7 +103,7 @@ export class OpenseaService {
     order_direction?: 'asc' | 'desc'; // ascending or descending sort.
     listed_after?: string; // Only show orders listed after this timestamp. Seconds since the Unix epoch.
     listed_before?: string; // Only show orders listed before this timestamp. Seconds since the Unix epoch.
-  }, isTestMode: boolean = false): Promise<OpenseaNftListingRes | undefined> => {
+  }, isTestMode: boolean = false): Promise<any> => {
     const url = `${this._getDomain(isTestMode)}/v2/orders/${this._getNetwork(isTestMode)}/seaport/listings${Utility.convertObjToQueryStr(p)}`;
     return await this.responseHelper(url);
   };

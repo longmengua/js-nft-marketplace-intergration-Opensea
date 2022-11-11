@@ -1,22 +1,28 @@
+import { OpenseaAssetI, OpenseaAssetRes } from "@/utils/opensea/type/openseaAssetRes";
+import { Utility } from "@/utils/util";
 import { useEffect, useState } from "react";
 import { OpenseaService } from "../../utils/opensea";
 
-type Props = {
-  token_address: string;
-  token_id: string;
-}
-
-export const useOpenseaNftDetail = (p: Props) => {
-  const [state, setState] = useState<any | undefined>(undefined);
+export const useOpenseaNftDetail = (token_address: string, token_id: string) => {
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [state, setState] = useState<OpenseaAssetI | undefined>(undefined);
 
   useEffect(() => {
+    if (isLoaded || !token_address || !token_id) return;
+    setIsLoaded(true);
     OpenseaService.getNftAssetByAddressAndId({
-      asset_contract_address: p.token_address,
-      token_ids: p.token_id,
-    }).then((res: any) => {
-      setState(res);
+      asset_contract_address: token_address,
+      token_ids: token_id,
+    }).then((res: OpenseaAssetRes | undefined) => {
+      const asset = Utility.arrayHelper<OpenseaAssetI>(res?.assets);
+      setState(asset);
+    }).finally(() => {
+      setIsLoaded(false);
     });
-  }, [])
-  
-  return state;
+  }, [token_address, token_id])
+ 
+  return {
+    data: state,
+    isLoaded: isLoaded,
+  };
 }

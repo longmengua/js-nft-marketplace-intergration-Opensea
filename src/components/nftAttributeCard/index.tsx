@@ -1,12 +1,11 @@
 type Props = {
-  key?: string;
-  value?: string;
+  type: string | undefined;
+  value: string | undefined;
 }
 
 export const NftAttributeCard = (p: Props) => {
-  return <div className="p-[10px] rounded-[10px] box-border">
-    <div className="text-gray-500 text-[10px]">{p.key}</div>
-    <div className="p-[2.5px]"/>
-    <div className="text-[14px] ">{p.value}</div>
+  return <div className="rounded-[10px] box-border flex items-center gap-[2px]">
+    <div className="text-gray-500 text-[10px] flex-[1]">{p.type}</div>
+    <div className="text-[12px] flex-[3]">{p.value}</div>
   </div>
 }

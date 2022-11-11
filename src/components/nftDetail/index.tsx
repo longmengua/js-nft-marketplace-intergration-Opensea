@@ -1,82 +1,43 @@
-import Image from 'next/image';import { useState } from 'react';
+import Image from 'next/image';
 import { NftAttributeCard } from '../nftAttributeCard';
-''
+import { NftDetailGradientTextColorClass } from './style';
+import { NftDetailProps } from './type';
 
-type Props = {
-  img_url: string;
-  summary: {
-    nft_author: string;
-    nft_description: string;
-    collection_name: string;
-    collection_description: string;
-  };
-  details: {
-    network: string;
-    creator_earnings: number;
-    token_address: string;
-    token_account: string;
-    token_id: string;
-    collection_account: string;
-    owner_account: string;
-    created_date: string;
-  };
-  traits: Array<{
-    trait_type: string;
-    value: string;
-    display_type: string;
-    max_value: string;
-    trait_count: string;
-    order: any;
-  }>;
-}
-
-enum Subject {
-  summary,
-  attributes,
-  details,
-}
-
-const gradientTextColorClass = {
-  background: 'linear-gradient(to right bottom, rgba(147,51,233, 0.8), rgba(147,51,233, 0.3))',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-}
-
-export const NftDetail = (p: Partial<Props>) => {
+export const NftDetail = (p: NftDetailProps | undefined) => {
   return <div className="flex justify-center gap-[10px]">
-    <div>
-      <Image src={''} width={300} height={300}/>
+    <div className='w-[280px] h-[280px]'>
+      {p?.img_url && <Image alt='' src={p?.img_url} width={280} height={280} />}
     </div>
-    <div className='flex-1'>
+    <div className='flex-1 flex flex-col justify-start'>
       <details className='italic cursor-pointer border-[2px] border-purple-600 rounded-[10px] p-[10px]'>
         <summary>
-          <span style={gradientTextColorClass}>Summary</span>
+          <span style={NftDetailGradientTextColorClass}>Summary</span>
         </summary>
         <div className='p-[20px] box-border'>
-          {!p.traits && <div className='italic text-center text-gray-400'>No data founded</div>}
-          {p?.traits?.map(v => <NftAttributeCard {...v} />)}
+          {!p?.summary && <div className='italic text-center text-gray-400'>No data founded</div>}
+          {/* <div>{p?.summary}</div> */}
         </div>
       </details>
       <div className='p-[2.5px]'/>
       <details className='italic cursor-pointer border-[2px] border-purple-600 rounded-[10px] p-[10px]'>
         <summary>
-          <span style={gradientTextColorClass}>Attributes</span>
+          <span style={NftDetailGradientTextColorClass}>Details</span>
         </summary>
         <div className='p-[20px] box-border'>
-          {!p.traits && <div className='italic text-center text-gray-400'>No data founded</div>}
-          {p?.traits?.map(v => <NftAttributeCard {...v} />)}
+        {!p?.details && <div className='italic text-center text-gray-400'>No data founded</div>}
+          {/* <div>{p?.details}</div> */}
         </div>
       </details>
       <div className='p-[2.5px]'/>
       <details className='italic cursor-pointer border-[2px] border-purple-600 rounded-[10px] p-[10px]'>
         <summary>
-          <span style={gradientTextColorClass}>Details</span>
+          <span style={NftDetailGradientTextColorClass}>Attributes</span>
         </summary>
-        <div className='p-[20px] box-border'>
-        {!p.details && <div className='italic text-center text-gray-400'>No data founded</div>}
-          <div></div>
+        <div className='px-[10px] box-border'>
+          {!p?.traits && <div className='italic text-center text-gray-400'>No data founded</div>}
+          {p?.traits?.map((v, i) => <NftAttributeCard key={'nft-attribute-card#' + i} type={v.trait_type} value={v.value} />)}
         </div>
       </details>
     </div>
-  </div>;
+  </div>
 }

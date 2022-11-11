@@ -3,18 +3,14 @@ import EthIcon from '@/public/eth-icon.png';
 import ExclamationMarkIcon from '@/public/exclamation-mark-icon.png';
 import { useState } from 'react';
 import { Logger } from '../../utils/log';
+import { NftCardProps } from './type';
 
-type Props = {
-  img_url?: string;
-  item_name?: string;
-  collection_name?: string;
-  price?: string;
-};
-
-export const NftCard = (p: Props) => {
+export const NftCard = (p: NftCardProps) => {
   const [showScaffoldImg, setShowScaffoldImg] = useState(true);
   if (p.collection_name === '' || p.item_name === '' || p.price === '') return <></>
-  return <div className='box-border rounded-[10px] w-[200px]'>
+  return <div className='box-border rounded-[10px] w-[200px]' onClick={() => {
+    p?.onClickItem && p.onClickItem({});
+  }}>
     <div className={`text-center mt-[10px] relative w-[200px] h-[200px]`}>
       {p.img_url && p.img_url.length > 0 && <Image 
         className='rounded-[15px]'
