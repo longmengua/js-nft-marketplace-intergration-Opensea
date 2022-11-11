@@ -39,7 +39,6 @@ export const Home = () => {
     }
   }, [nftCardInfos])
 
-  // console.log('===', state, assetInfo, nftDetailProps);
   return <div className="">
     <div className="flex justify-between w-[1050px] my-0 mx-auto box-border">
       <div className="flex-1 p-[10px]">
@@ -58,7 +57,7 @@ export const Home = () => {
             <div className="w-[85px] ">{Utility.addressShortcut(signerAddress) || '-'}</div>
           </div>
         </div>
-        <div className={'rounded-[10px] bg-gradient-to-r from-cyan-500 to-blue-500 text-center text-white cursor-pointer'} onClick={() => signerAddress ? connect() : disconnect()}>{signerAddress ? 'Disconnect' : 'Connect'}</div>
+        <div className={'rounded-[10px] bg-gradient-to-r from-cyan-500 to-blue-500 text-center text-white cursor-pointer'} onClick={() => !signerAddress ? connect() : disconnect()}>{signerAddress ? 'Disconnect' : 'Connect'}</div>
       </div>
     </div>
     <br />

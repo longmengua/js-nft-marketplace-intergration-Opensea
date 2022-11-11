@@ -3,7 +3,7 @@ import { Utility } from "@/utils/util";
 import { useEffect, useState } from "react";
 import { OpenseaService } from "../../utils/opensea";
 
-export const useOpenseaNftDetail = (token_address: string, token_id: string) => {
+export const useOpenseaNftDetail = (token_address?: string, token_id?: string) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [state, setState] = useState<OpenseaAssetI | undefined>(undefined);
 
