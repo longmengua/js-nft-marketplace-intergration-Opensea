@@ -9,6 +9,7 @@
     "@metamask/detect-provider": "^2.0.0",
     "@opensea/seaport-js": "^1.0.7",
     "axios": "^1.0.0",
+    "copy-to-clipboard": "^3.3.2",
     "ethers": "^5.7.1",
     "next": "latest",
     "react": "18.1.0",
