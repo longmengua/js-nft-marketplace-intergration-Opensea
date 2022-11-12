@@ -21,7 +21,7 @@ export const NftDetail = (p: NftDetailProps | undefined) => {
   
   return <div className="NftDetail flex justify-center gap-[10px]">
     <div className='w-[300px] h-[300px] relative'>
-      {p?.img_url && <Image alt='' src={p?.img_url} width={300} height={300} />}
+      {p?.img_url && <Image alt='' src={p?.img_url} width={300} height={300} className='rounded-[15px]' />}
       {!p?.img_url && <div className={`rounded-[15px] absolute animate-pulse bg-slate-400 top-0  w-[300px] h-[300px]`} />}
     </div>
     <div className='flex-1 flex flex-col justify-start'>
