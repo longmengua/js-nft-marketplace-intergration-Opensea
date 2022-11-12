@@ -24,8 +24,8 @@ export const Home = () => {
   const { data: listedNft, isLoaded } = useOpenseaListedNfts(limit);
   const nftCardInfos: Array<NftCardProps> | undefined = listedNft?.map(NftCardProps.convert);
   const [state, setState] = useState<undefined | HomeStateI>(undefined);
-  const { data: assetInfo } = useOpenseaNftDetail(state?.token_address, state?.token_id);
-  const nftDetailProps: NftDetailProps | undefined = NftDetailProps.convert(assetInfo);
+  const { data: assetInfo, isLoaded: loadingAsset } = useOpenseaNftDetail(state?.token_address, state?.token_id);
+  const nftDetailProps: NftDetailProps | undefined = loadingAsset ? undefined : NftDetailProps.convert(assetInfo);
 
   useEffect(() => {
     if (state) return;
@@ -38,7 +38,7 @@ export const Home = () => {
       setState(pre => pre ?? newState);
     }
   }, [nftCardInfos])
-
+  console.log('nftDetailProps', nftDetailProps);
   return <div className="">
     <div className="flex justify-between w-[1050px] my-0 mx-auto box-border">
       <div className="flex-1 p-[10px]">
@@ -62,7 +62,9 @@ export const Home = () => {
     </div>
     <br />
     <div className="justify-center flex flex-wrap w-[1050px] h-[40%] my-0 mx-auto gap-[10px] overflow-y-scroll box-border">
-      {nftCardInfos?.map((v, i) => <NftCard {...v} key={'nft-card#' + i} />)}
+      {nftCardInfos?.map((v, i) => <NftCard {...v} key={'nft-card#' + i} onClickItem={(token_address, token_id) => {
+        setState({token_address, token_id});
+      }}/>)}
       {!listedNft && Array.from({length: limit}, (v) => v).map((v, i) => <NftCard key={'nft-splash-card#' + i} img_url={undefined} item_name={undefined} collection_name={undefined} price={undefined} token_address={undefined} token_id={undefined} />)}
     </div>
     <br />

@@ -20,15 +20,16 @@ export const NftDetail = (p: NftDetailProps | undefined) => {
   }
   
   return <div className="NftDetail flex justify-center gap-[10px]">
-    <div className='w-[280px] h-[280px]'>
+    <div className='w-[300px] h-[300px] relative'>
       {p?.img_url && <Image alt='' src={p?.img_url} width={300} height={300} />}
+      {!p?.img_url && <div className={`rounded-[15px] absolute animate-pulse bg-slate-400 top-0  w-[300px] h-[300px]`} />}
     </div>
     <div className='flex-1 flex flex-col justify-start'>
       <details className='italic border-[2px] border-purple-600 rounded-[10px] p-[10px]' open={state === ColEnum.summary}>
         <summary className='cursor-pointer' onClick={(e) => onClickSummary(e, ColEnum.summary)}>
           <span style={NftDetailGradientTextColorClass}>Summary</span>
         </summary>
-        <div className='px-[10px] box-border'>
+        <div className='px-[10px] box-border max-h-[150px] overflow-y-auto'>
           {!p?.summary && <div className='italic text-center text-gray-400'>No data founded</div>}
           {p?.summary && <div>
             <NftAttributeCard type={'Collection name'} value={p?.summary?.collection_name} />
@@ -43,7 +44,7 @@ export const NftDetail = (p: NftDetailProps | undefined) => {
         <summary className='cursor-pointer' onClick={(e) => onClickSummary(e, ColEnum.properties)}>
           <span style={NftDetailGradientTextColorClass}>Properties</span>
         </summary>
-        <div className='px-[10px] box-border'>
+        <div className='px-[10px] box-border max-h-[150px] overflow-y-auto'>
           {!p?.traits && <div className='italic text-center text-gray-400'>No data founded</div>}
           {p?.traits?.map((v, i) => <NftAttributeCard key={'nft-attribute-card#' + i} type={v.trait_type} value={v.value} />)}
         </div>
@@ -53,21 +54,21 @@ export const NftDetail = (p: NftDetailProps | undefined) => {
         <summary className='cursor-pointer' onClick={(e) => onClickSummary(e, ColEnum.details)}>
           <span style={NftDetailGradientTextColorClass}>Details</span>
         </summary>
-        <div className='px-[10px] box-border'>
-        {(!p?.details || p.traits?.length === 0) && <div className='italic text-center text-gray-400'>No data founded</div>}
-        {p?.details && <div>
-          <NftAttributeCard type={'NFT fee'} value={p?.details?.creator_earnings?.toString()} />
-          <NftAttributeCard suffix={'ETH'} type={'Price'} value={p?.details?.price} />
-          <NftAttributeCard type={'Collection name'} value={p?.details?.collection_name} />
-          <NftAttributeCard type={'NFT name'} value={p?.details?.nft_name} />
-          <NftAttributeCard showCopyIcon={true} type={'NFT token address'} value={Utility.addressShortcut(p?.details?.token_address)} />
-          <NftAttributeCard showCopyIcon={true} type={'NFT token ID'} value={Utility.addressShortcut(p?.details?.token_id)} />
-          <NftAttributeCard type={'Network'} value={p?.details?.network} />
-          <NftAttributeCard type={'Created date'} value={Utility.dateFormatter(p?.details?.nft_created_date)} />
-          <NftAttributeCard type={'Last updated date'} value={Utility.dateFormatter(p?.details?.nft_last_updated_date)} />
-          <NftAttributeCard type={'Listing date'} value={Utility.dateFormatter(p?.details?.nft_listing_date)} />
-          <NftAttributeCard type={'Listing expired date'} value={Utility.dateFormatter(p?.details?.nft_listing_expired_date)} />
-        </div>}
+        <div className='px-[10px] box-border max-h-[150px] overflow-y-auto'>
+          {(!p?.details || p.traits?.length === 0) && <div className='italic text-center text-gray-400'>No data founded</div>}
+          {p?.details && <>
+            <NftAttributeCard type={'NFT fee'} value={p?.details?.creator_earnings?.toString()} />
+            <NftAttributeCard suffix={'ETH'} type={'Price'} value={p?.details?.price} />
+            <NftAttributeCard type={'Collection name'} value={p?.details?.collection_name} />
+            <NftAttributeCard type={'NFT name'} value={p?.details?.nft_name} />
+            <NftAttributeCard showCopyIcon={true} type={'NFT token address'} value={Utility.addressShortcut(p?.details?.token_address)} />
+            <NftAttributeCard showCopyIcon={true} type={'NFT token ID'} value={Utility.addressShortcut(p?.details?.token_id)} />
+            <NftAttributeCard type={'Network'} value={p?.details?.network} />
+            <NftAttributeCard type={'Created date'} value={Utility.dateFormatter(p?.details?.nft_created_date)} />
+            <NftAttributeCard type={'Last updated date'} value={Utility.dateFormatter(p?.details?.nft_last_updated_date)} />
+            <NftAttributeCard type={'Listing date'} value={Utility.dateFormatter(p?.details?.nft_listing_date)} />
+            <NftAttributeCard type={'Listing expired date'} value={Utility.dateFormatter(p?.details?.nft_listing_expired_date)} />
+          </>}
         </div>
       </details>
     </div>

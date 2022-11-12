@@ -9,7 +9,7 @@ export const NftCard = (p: NftCardProps) => {
   const [showScaffoldImg, setShowScaffoldImg] = useState(true);
   if (p.collection_name === '' || p.item_name === '' || p.price === '') return <></>
   return <div className='box-border rounded-[10px] w-[200px]' onClick={() => {
-    p?.onClickItem && p.onClickItem({});
+    p?.onClickItem && p.onClickItem(p?.token_address, p?.token_id);
   }}>
     <div className={`text-center mt-[10px] relative w-[200px] h-[200px]`}>
       {p.img_url && p.img_url.length > 0 && <Image 

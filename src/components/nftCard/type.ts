@@ -9,7 +9,7 @@ export class NftCardProps {
   price: string | undefined;
   token_address: string | undefined;
   token_id: string | undefined;
-  onClickItem?: (p: {}) => void;
+  onClickItem?: (token_address: string | undefined, token_id: string | undefined) => void;
 
   static convert = (p: OpenseaNftOrderI): NftCardProps => {
     const asset: OpenseaOrderAssetI | undefined = Utility.arrayHelper(p?.maker_asset_bundle?.assets);
