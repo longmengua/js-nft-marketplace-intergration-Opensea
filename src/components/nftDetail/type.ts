@@ -1,6 +1,7 @@
 import { ChainEnum } from "@/utils/enum/chain.enum";
 import { OpenseaAssetI, OpenseaSellOrderI } from "@/utils/opensea/type/openseaAssetRes";
 import { Utility } from "@/utils/util";
+import { ethers } from "ethers";
 
 export class NftDetailProps {
   img_url: undefined | string;
@@ -11,10 +12,13 @@ export class NftDetailProps {
     collection_description: string;
   };
   details: undefined | {
-    network: string;
-    creator_earnings: number;
+    collection_name: undefined | string;
+    nft_name: undefined | string;
+    price: undefined | string;
     token_address: string;
     token_id: string;
+    network: string;
+    creator_earnings: number;
     nft_created_date: number | undefined;
     nft_last_updated_date: number | undefined;
     nft_listing_date: number | undefined;
@@ -42,6 +46,9 @@ export class NftDetailProps {
         collection_description: p?.collection?.description,
       },
       details: {
+        collection_name: p?.collection?.name,
+        nft_name: p?.name,
+        price: searport_order?.current_price ? (Number(searport_order.current_price)/10 ** 18).toFixed(6) : '',
         network: ChainEnum.ETHEREUM,
         creator_earnings: 0,
         token_address: p?.asset_contract?.address,
