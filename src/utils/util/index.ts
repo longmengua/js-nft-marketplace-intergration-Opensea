@@ -40,5 +40,11 @@ export class Utility {
     return !array || array.length < l ? undefined : array[index ?? 0];
   };
 
-  static addressShortcut = (address?: string) => address ? `${address?.slice(0, 4)}...${address?.slice(address.length - 4, address.length)}` : '';
+  static addressShortcut = (address?: string, length: number = 12) => address ? address?.length > length ? `${address?.slice(0, length/2)}...${address?.slice(address.length - length/2, address.length)}` : address : '';
+
+  static dateFormatter = (date: number | undefined): string => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleString();
+  }
 }

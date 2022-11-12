@@ -1,7 +1,7 @@
 interface AssetContract {
   address: string;
   asset_contract_type: string;
-  created_date: Date;
+  created_date: string;
   name: string;
   nft_version?: any;
   opensea_version?: any;
@@ -144,8 +144,8 @@ interface MakerFee {
 }
 
 export interface OpenseaSellOrderI {
-  created_date: Date;
-  closing_date: Date;
+  created_date: string;
+  closing_date: string;
   listing_time: number;
   expiration_time: number;
   order_hash: string;

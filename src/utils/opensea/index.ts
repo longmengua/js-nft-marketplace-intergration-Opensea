@@ -85,10 +85,11 @@ export class OpenseaService {
   static getNftAssetByAddressAndId = async (p: {
     asset_contract_address: string;
     token_ids: Array<string> | string;
+    include_orders?: boolean;
   }, isTestMode: boolean = false): Promise<OpenseaAssetRes | undefined> => {
     if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
     return await this.responseHelper(
-      `${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr(p)}`,
+      `${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({...p, include_orders: true})}`,
     );
   };
 
