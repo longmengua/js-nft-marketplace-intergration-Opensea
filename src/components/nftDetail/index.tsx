@@ -84,8 +84,8 @@ export const NftDetail = (p: NftDetailProps | undefined) => {
             <NftAttributeCard suffix={'ETH'} type={'Price'} value={p?.details?.price} />
             <NftAttributeCard type={'Collection name'} value={p?.details?.collection_name} />
             <NftAttributeCard type={'NFT name'} value={p?.details?.nft_name} />
-            <NftAttributeCard showCopyIcon={true} type={'NFT token address'} value={Utility.addressShortcut(p?.details?.token_address)} />
-            <NftAttributeCard showCopyIcon={true} type={'NFT token ID'} value={Utility.addressShortcut(p?.details?.token_id)} />
+            <NftAttributeCard showCopyIcon={true} type={'NFT token address'} value={p?.details?.token_address} />
+            <NftAttributeCard showCopyIcon={true} type={'NFT token ID'} value={p?.details?.token_id} />
             <NftAttributeCard type={'Network'} value={p?.details?.network} />
             <NftAttributeCard type={'Created date'} value={Utility.dateFormatter(p?.details?.nft_created_date)} />
             <NftAttributeCard type={'Last updated date'} value={Utility.dateFormatter(p?.details?.nft_last_updated_date)} />
