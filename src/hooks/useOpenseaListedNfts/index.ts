@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { OpenseaService } from "../../utils/opensea";
 
-export const useOpenseaListedNfts = (limit?: number) => {
+export const useOpenseaListedNfts = (limit?: number, chainId?: number) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [state, setState] = useState<any[] | undefined>();
 
   const getOpenseaListedNfts = useCallback(async () => {
-    const data =  await OpenseaService.getNftListing({limit});
+    // console.log('chainId', chainId);
+    const isTestMode = chainId === 5;
+    const data =  await OpenseaService.getNftListing({limit}, isTestMode);
     const orders = data.orders;
     setState(orders);
   }, [])

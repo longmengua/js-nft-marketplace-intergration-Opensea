@@ -9,8 +9,8 @@ export const Copy = (p: { toCopy: string | undefined; children?: React.ReactNode
   const [isCopied, setCopied] = useCopyClipboard()
   const iconSize = p?.iconSize ?? 12;
   return (
-    <div className='flex cursor-pointer items-center' onClick={() => p.toCopy && setCopied(p.toCopy)}>
-      <div>{p.children}</div>
+    <div className='flex cursor-pointer items-center flex-wrap' onClick={() => p.toCopy && setCopied(p.toCopy)}>
+      <div className='flex-1'>{p.children}</div>
       <div className='p-[3px]' />
       <Image src={isCopied ? tickIcon : copyIcon} width={iconSize} height={iconSize} />
     </div>

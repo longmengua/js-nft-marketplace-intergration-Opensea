@@ -19,9 +19,10 @@ export const Home = () => {
     disconnect,
     signerAddress,
     signer,
+    chainId,
   } = useMetamaskWallet();
   const limit = 20;
-  const { data: listedNft, isLoaded } = useOpenseaListedNfts(limit);
+  const { data: listedNft, isLoaded } = useOpenseaListedNfts(limit, chainId);
   const nftCardInfos: Array<NftCardProps> | undefined = listedNft?.map(NftCardProps.convert);
   const [state, setState] = useState<undefined | HomeStateI>(undefined);
   const { data: assetInfo, isLoaded: loadingAsset } = useOpenseaNftDetail(state?.token_address, state?.token_id);
@@ -55,7 +56,7 @@ export const Home = () => {
           <div className="text-black pr-[5px]">Wallet Address :</div>
           <div className="text-blue-500 relative group">
             <div className="hidden group-hover:block  bg-slate-400 rounded-[5px] py-[3px] px-[10px] absolute left-0 right-0 translate-y-[-100%] translate-x-[-50%] w-fit text-white">{signerAddress}</div>
-            <div className="w-[85px] ">{Utility.addressShortcut(signerAddress) || '-'}</div>
+            <div className="w-[85px] ">{Utility.strShortcut(signerAddress) || '-'}</div>
           </div>
         </div>
         <button className={'px-[10px] rounded-[5px] bg-gradient-to-r from-cyan-500 to-blue-500 text-center text-white cursor-pointer'} onClick={() => !signerAddress ? connect() : disconnect()}>{signerAddress ? 'Disconnect' : 'Connect'}</button>

@@ -40,7 +40,7 @@ export class Utility {
     return !array || array.length < l ? undefined : array[index ?? 0];
   };
 
-  static addressShortcut = (address?: string, length: number = 12) => address ? address?.length > length ? `${address?.slice(0, length/2)}...${address?.slice(address.length - length/2, address.length)}` : address : '';
+  static strShortcut = (address?: string, length: number = 12) => address ? address?.length > length ? `${address?.slice(0, length/2)}...${address?.slice(address.length - length/2, address.length)}` : address : '';
 
   static dateFormatter = (date: number | undefined): string => {
     if (!date) return '-';
