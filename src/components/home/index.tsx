@@ -13,8 +13,8 @@ export const Home = () => {
     signer,
   } = useMetamaskWallet();
   const [state, setState] = useState({
-    nft_token_address: '',
-    nft_token_id: '',
+    nft_token_address: '0xf4910c763ed4e47a585e2d34baa9a4b611ae448c',
+    nft_token_id: '114139018855137944860863318946237270478060854979150640350732175537125046878209',
   });
   const { asset, order, isLoading } = useOpenseaListings({
     nft_token_address: state.nft_token_address,
