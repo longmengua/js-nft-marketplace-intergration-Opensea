@@ -3,7 +3,7 @@ import { useOpenseaListedNfts } from "../../hooks/useOpenseaListedNfts";
 import { Utility } from "../../utils/util";
 import { NftCard } from "../../components/nftCard";
 import { NftDetail } from "../../components/nftDetail";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useOpenseaNftDetail } from "../../hooks/useOpenseaNftDetail";
 import { NftCardProps } from "@/components/nftCard/type";
 import { NftDetailProps } from "@/components/nftDetail/type";
@@ -21,11 +21,15 @@ export const Home = () => {
     signer,
     chainId,
   } = useMetamaskWallet();
+  const isTestMode = true;
   const limit = 20;
-  const { data: listedNft, isLoaded } = useOpenseaListedNfts(limit, chainId);
+  const { data: listedNft, isLoaded } = useOpenseaListedNfts(limit, isTestMode);
   const nftCardInfos: Array<NftCardProps> | undefined = listedNft?.map(NftCardProps.convert);
-  const [state, setState] = useState<undefined | HomeStateI>(undefined);
-  const { data: assetInfo, isLoaded: loadingAsset } = useOpenseaNftDetail(state?.token_address, state?.token_id);
+  const [state, setState] = useState<undefined | HomeStateI>({
+    token_address: '0xf4910c763ed4e47a585e2d34baa9a4b611ae448c',
+    token_id: '114139018855137944860863318946237270478060854979150640350732175537125046878209',
+  });
+  const { data: assetInfo, isLoaded: loadingAsset } = useOpenseaNftDetail(state?.token_address, state?.token_id, isTestMode);
   const nftDetailProps: NftDetailProps | undefined = loadingAsset ? undefined : NftDetailProps.convert(assetInfo);
 
   useEffect(() => {

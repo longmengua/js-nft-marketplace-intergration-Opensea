@@ -13,11 +13,17 @@ export class OpenseaService {
   static specialCaseKeys: Array<string> = Object.keys(this.specialCases);
   static cursorCache: Record<string, Record<number, string>> = {};
   
-  static responseHelper = async <T = any>(url: string, params?: any): Promise<T | undefined> => {
+  static responseHelper = async <T = any>(p: {
+    url: string; 
+    params?: any; 
+    isTestMode?: boolean;
+  }): Promise<T | undefined> => {
+    const { url, params, isTestMode } = p;
     let toReturn: T | undefined = undefined;
     let isSuccessful = false;
-    const headers = {
-      'X-API-KEY': `${openseaApiKey}`,
+    const headers: Record<string, string> = {};
+    if (!isTestMode) {
+      headers['X-API-KEY'] = openseaApiKey;
     };
     while (!isSuccessful) {
       const res = await axios
@@ -25,7 +31,9 @@ export class OpenseaService {
           headers,
           params,
         })
-        .catch((e) => e?.response);
+        .catch((e) => {
+          return e?.response;
+        });
       const status = res?.status;
       if (status === SUCCESS) {
         isSuccessful = true;
@@ -33,7 +41,7 @@ export class OpenseaService {
         break;
       }
       if (status !== SUCCESS && status !== TOO_MANY_REQUEST) {
-        throw new Error(`Failed on opensea API.(url:${url})(params:${params})`);
+        throw new Error(url);
       }
       if (status === TOO_MANY_REQUEST) {
         await Utility.sleep(1000);
@@ -64,7 +72,10 @@ export class OpenseaService {
 
   static getStatByCollectionSlug = async (p: {slug: string}, isTestMode: boolean = false): Promise<any> => {
     const collectionName = this.specialCaseKeys.includes(p.slug) ? this.specialCases[p.slug] : p.slug;
-    return await this.responseHelper(`${opensea_api_domain}/v1/collection/${collectionName}/stats`);
+    const url = `${opensea_api_domain}/v1/collection/${collectionName}/stats`;
+    return await this.responseHelper({
+      url, isTestMode,
+    });
   };
 
   static getNftAssetsByCollectionSlug = async (p: {
@@ -79,7 +90,10 @@ export class OpenseaService {
   } | undefined> => {
     const { order_direction = 'desc' } = p;
     if (!p?.collection_slug) throw new Error('Missing collection slug');
-    return await this.responseHelper(`${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({ ...p, order_direction })}`);
+    const url = `${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({ ...p, order_direction })}`;
+    return await this.responseHelper({
+      url, isTestMode,
+    });
   };
 
   static getNftAssetByAddressAndId = async (p: {
@@ -88,9 +102,11 @@ export class OpenseaService {
     include_orders?: boolean;
   }, isTestMode: boolean = false): Promise<OpenseaAssetRes | undefined> => {
     if (!p?.token_ids || !p?.asset_contract_address) throw new Error('Invalidated input');
-    return await this.responseHelper(
-      `${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({...p, include_orders: true})}`,
-    );
+    const url = `${this._getDomain(isTestMode)}/v1/assets${Utility.convertObjToQueryStr({...p, include_orders: true})}`;
+    console.log('getNftAssetByAddressAndId', url);
+    return await this.responseHelper({
+      url, isTestMode,
+    });
   };
 
   // This is used to fetch the set of active listings on a given NFT for the Seaport contract.
@@ -106,7 +122,9 @@ export class OpenseaService {
     listed_before?: string; // Only show orders listed before this timestamp. Seconds since the Unix epoch.
   }, isTestMode: boolean = false): Promise<any> => {
     const url = `${this._getDomain(isTestMode)}/v2/orders/${this._getNetwork(isTestMode)}/seaport/listings${Utility.convertObjToQueryStr(p)}`;
-    return await this.responseHelper(url);
+    return await this.responseHelper({
+      url, isTestMode,
+    });
   };
 
   // This is used to fetch the set of active offers on a given NFT for the Seaport contract.
@@ -122,6 +140,8 @@ export class OpenseaService {
     listed_before?: string; // Only show orders listed before this timestamp. Seconds since the Unix epoch.
   }, isTestMode: boolean = false): Promise<any> => {
     const url = `${this._getDomain(isTestMode)}/v2/orders/${this._getNetwork(isTestMode)}/seaport/offers`;
-    return await this.responseHelper(url);
+    return await this.responseHelper({
+      url, isTestMode,
+    });
   };
 }
