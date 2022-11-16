@@ -1,3 +1,5 @@
+import { useMetamaskWallet } from '@/providers/wallet/metamask';
+import { SeaportService } from '@/utils/seaport';
 import { Utility } from '@/utils/util';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -13,6 +15,23 @@ enum ColEnum {
 
 export const NftDetail = (p: NftDetailProps | undefined) => {
   const [state, setState] = useState<ColEnum | undefined>(ColEnum.details);
+  const {
+    connect,
+    disconnect,
+    signerAddress,
+    signer,
+  } = useMetamaskWallet();
+
+  const buyListingNft = async () => {
+    if (!signer || !signerAddress) throw new Error('Missing signer');
+    if (!p?.order_protocol_data) throw new Error('Missing protocol data');
+    console.log('data', p?.order_protocol_data);
+    await SeaportService.buyListedNft({
+      signer: signer,
+      signer_address: signerAddress,
+      order_protocol_data: p?.order_protocol_data,
+    });
+  }
 
   const onClickSummary = (event: any, col: ColEnum) => {
     event?.preventDefault();
@@ -25,6 +44,10 @@ export const NftDetail = (p: NftDetailProps | undefined) => {
       {!p?.img_url && <div className={`rounded-[15px] absolute animate-pulse bg-slate-400 top-0  w-[300px] h-[300px]`} />}
     </div>
     <div className='flex-1 flex flex-col justify-start'>
+      <div className='p-[5px] flex items-center gap-[10px]'>
+        <button className='px-[10px] rounded-[5px] bg-gradient-to-r from-cyan-500 to-blue-500 text-center text-white cursor-pointer' onClick={() => buyListingNft()}>Buy NFT</button>
+        <div>Price: {p?.details?.price ?? '-'} ETH</div>
+      </div>
       <details className='italic border-[2px] border-purple-600 rounded-[10px] p-[10px]' open={state === ColEnum.summary}>
         <summary className='cursor-pointer' onClick={(e) => onClickSummary(e, ColEnum.summary)}>
           <span style={NftDetailGradientTextColorClass}>Summary</span>

@@ -1,7 +1,6 @@
 import { ChainEnum } from "@/utils/enum/chain.enum";
-import { OpenseaAssetI, OpenseaSellOrderI } from "@/utils/opensea/type/openseaAssetRes";
+import { OpenseaAssetI, OpenseaProtocolData, OpenseaSellOrderI } from "@/utils/opensea/type/openseaAssetRes";
 import { Utility } from "@/utils/util";
-import { ethers } from "ethers";
 
 export class NftDetailProps {
   img_url: undefined | string;
@@ -32,6 +31,7 @@ export class NftDetailProps {
     trait_count: string;
     order: any;
   }>;
+  order_protocol_data: undefined | OpenseaProtocolData;
 
   static convert = (p: OpenseaAssetI | undefined): NftDetailProps | undefined => {
     if (!p) return undefined;
@@ -59,6 +59,7 @@ export class NftDetailProps {
         nft_listing_expired_date: !searport_order ? undefined : searport_order?.expiration_time,
       },
       traits: p.traits,
+      order_protocol_data: searport_order?.protocol_data,
     };
     return data;
   }

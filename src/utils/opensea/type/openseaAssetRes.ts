@@ -119,7 +119,7 @@ interface Parameters {
   counter: number;
 }
 
-interface ProtocolData {
+export interface OpenseaProtocolData {
   parameters: Parameters;
   signature: string;
 }
@@ -149,7 +149,7 @@ export interface OpenseaSellOrderI {
   listing_time: number;
   expiration_time: number;
   order_hash: string;
-  protocol_data: ProtocolData;
+  protocol_data: OpenseaProtocolData;
   protocol_address: string;
   maker: Maker;
   taker?: any;
