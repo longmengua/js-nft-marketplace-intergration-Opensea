@@ -1,7 +1,8 @@
-# opensea_marketplace_integartion
+# Opensea marketplace integration
 
-## [Seaport](https://github.com/ProjectOpenSea/seaport-js)
+- to buy and list up NFT in Opensea
 
-## Note
+## reference
 
 - [detail element not working for open attribute](https://github.com/facebook/react/issues/15486)
+- [Seaport](https://github.com/ProjectOpenSea/seaport-js)
